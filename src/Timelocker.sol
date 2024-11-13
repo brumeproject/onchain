@@ -28,7 +28,7 @@ contract OldTimelocker is Ownable {
     constructor(
         Ownable target_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         target = target_;
     }
@@ -76,7 +76,7 @@ contract Timelocker is Ownable {
     constructor(
         Ownable target_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         target = target_;
     }

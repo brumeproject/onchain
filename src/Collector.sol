@@ -188,7 +188,7 @@ contract OldCollector is Ownable {
     constructor(
         INonfungiblePositionManager manager_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         manager = manager_;
     }

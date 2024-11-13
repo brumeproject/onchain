@@ -24,7 +24,7 @@ contract Acquirer is Ownable {
         UnDisposable disposable_,
         Ownable ownable_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         disposable = disposable_;
         ownable = ownable_;
@@ -57,7 +57,7 @@ contract Restricter is Ownable {
         ToDisposable disposable_,
         address to_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         disposable = disposable_;
         to = to_;

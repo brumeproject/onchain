@@ -10,7 +10,7 @@ contract Blog is Ownable {
     uint256 public length = 0;
 
     constructor()
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {}
 
     event Created(uint256 indexed index, string text);

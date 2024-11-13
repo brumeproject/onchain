@@ -11,7 +11,7 @@ contract Art is Ownable, ERC721, ERC721URIStorage, ERC721Enumerable, ERC721Royal
 
     constructor()
         ERC721("Brume Art", "BRUME")
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {}
 
     function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Royalty) returns (bool) {
@@ -63,7 +63,7 @@ contract OldMultiminter is Ownable {
     constructor(
         Art art_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         art = art_;
     }

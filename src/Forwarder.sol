@@ -2,26 +2,10 @@
 pragma solidity ^0.8.20;
 
 import { Owned } from "./owned.sol";
-import { SafeCast } from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-contract Owner {
-    using SafeCast for *;
-
-    Owned public collection;
+abstract contract Forwarder is Owned {
 
     address public implementation;
-
-    constructor(
-        Owned collection_,
-        address implementation_
-    ) {
-        collection = collection_;
-        implementation = implementation_;
-
-        collection.mint(msg.sender);
- 
-        return;
-    }
 
     modifier onlyOwner() {
         if (msg.sender == owner()) {
@@ -29,10 +13,6 @@ contract Owner {
         } else {
             revert();
         }
-    }
-
-    function owner() public view returns (address) {
-        return collection.ownerOf(uint256(uint160(address(this))));
     }
 
     function setImplementation(address implementation_) external onlyOwner {

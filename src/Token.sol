@@ -12,7 +12,7 @@ contract Token is Ownable, ERC20, ERC20Burnable {
         string memory symbol_
     )
         ERC20(name_, symbol_)
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {}
 
     function mint(address to, uint256 amount) public onlyOwner {
@@ -24,11 +24,11 @@ contract Token is Ownable, ERC20, ERC20Burnable {
     }
 
     function approveAll(address spender) public {
-        approve(spender, balanceOf(_msgSender()));
+        approve(spender, balanceOf(msg.sender));
     }
 
     function approveAllToOwner() public {
-        approve(owner(), balanceOf(_msgSender()));
+        approve(owner(), balanceOf(msg.sender));
     }
 
 }
@@ -40,7 +40,7 @@ contract OldMultisender is Ownable {
     constructor(
         Token token_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         token = token_;
     }
@@ -64,7 +64,7 @@ contract OldMultiminter is Ownable {
     constructor(
         Token token_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         token = token_;
     }
@@ -95,7 +95,7 @@ contract Inflator is Ownable {
         Token token_,
         address target_
     )
-        Ownable(_msgSender())
+        Ownable(msg.sender)
     {
         token = token_;
         target = target_;

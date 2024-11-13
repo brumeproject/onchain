@@ -117,11 +117,11 @@ contract Governance is Ownable, ERC20, ERC20Wrapper, ERC20Votes {
      * @dev Acquire the governance if you have the most voting power.
      */
     function acquire() public {
-        if (getPastVotes(_msgSender(), block.number - 1) < getVotes(owner())) {
-            revert GovernanceInsufficientPower(_msgSender());
+        if (getPastVotes(msg.sender, block.number - 1) < getVotes(owner())) {
+            revert GovernanceInsufficientPower(msg.sender);
         }
 
-        _transferOwnership(_msgSender());
+        _transferOwnership(msg.sender);
     }
 
     /**
@@ -135,28 +135,28 @@ contract Governance is Ownable, ERC20, ERC20Wrapper, ERC20Votes {
      * @dev Increase your voting power by wrapping `amount` of your original tokens.
      */
     function deposit(uint256 amount) public {
-        depositFor(_msgSender(), amount);
+        depositFor(msg.sender, amount);
     }
 
     /**
      * @dev Increase your voting power by wrapping all your original tokens.
      */
     function depositAll() public {
-        depositFor(_msgSender(), underlying().balanceOf(_msgSender()));
+        depositFor(msg.sender, underlying().balanceOf(msg.sender));
     }
 
     /**
      * Decrease your voting power by unwrapping `amount` of your original tokens.
      */
     function withdraw(uint256 amount) public {
-        withdrawTo(_msgSender(), amount);
+        withdrawTo(msg.sender, amount);
     }
 
     /**
      * Decrease your voting power by unwrapping all your original tokens.
      */
     function withdrawAll() public {
-        withdrawTo(_msgSender(), balanceOf(_msgSender()));
+        withdrawTo(msg.sender, balanceOf(msg.sender));
     }
 
     /**
@@ -234,8 +234,8 @@ contract Governance is Ownable, ERC20, ERC20Wrapper, ERC20Votes {
      * @dev Throws if the sender is not this contract.
      */
     function _checkSelf() internal view {
-        if (address(this) != _msgSender()) {
-            revert GovernanceUnauthorizedAccount(_msgSender());
+        if (address(this) != msg.sender) {
+            revert GovernanceUnauthorizedAccount(msg.sender);
         }
     }
 
