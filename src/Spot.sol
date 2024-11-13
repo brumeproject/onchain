@@ -8,49 +8,65 @@ import { Forwarder } from "./forwarder.sol";
 
 /**
  * An ownable spot in a Harberger-style top-of-the-hill auction
+ * Withdraw is timelocked to prevent flash-loans or fast-loans
  */
 contract Spot is Ownable {
 
     Token public token;
 
+    uint256 public delay;
+
+    uint256 public timestamp = block.timestamp;
+
     constructor(
-        Token token_
+        Token token_,
+        uint256 delay_
     )
         Ownable(msg.sender)
     {
         token = token_;
+        delay = delay_;
     }
 
     function acquire(uint256 amount) public {
-        uint256 balance = token.balanceOf(address(this));
+        uint256 price = token.balanceOf(address(this));
         
-        if (amount < balance)
+        if (amount < price)
             revert();
 
         token.transferFrom(msg.sender, address(this), amount);
 
-        token.transfer(owner(), balance);
+        token.transfer(owner(), price);
         _transferOwnership(msg.sender);
+
+        timestamp = block.timestamp + delay;
+    }
+
+    function deposit(uint256 amount) public onlyOwner {
+        token.transferFrom(msg.sender, address(this), amount);
     }
 
     function withdraw(uint256 amount) public onlyOwner {
+        if (block.timestamp < timestamp)
+            revert();
         token.transfer(owner(), amount);
     }
 
 }
 
 /**
- * Example contract that puts ads on spots
+ * Example contract that puts ads on owners
  */
 contract Ads {
 
-    mapping(Owned => string) public ads;
+    mapping(address => string) public ads;
 
-    function publish(Owned owned, string calldata ad) public {
-        if (msg.sender != owned.owner())
-            revert();
-            
-        ads[owned] = ad;
+    function publish(string calldata ad) public {
+        ads[msg.sender] = ad;
+    }
+
+    function retrieve(Spot spot) public view returns (string memory) {
+        return ads[spot.owner()];
     }
 
 }
