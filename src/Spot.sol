@@ -3,8 +3,6 @@ pragma solidity ^0.8.20;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Token } from "./token.sol";
-import { Owned } from "./owned.sol";
-import { Forwarder } from "./forwarder.sol";
 
 /**
  * An ownable spot in a Harberger-style top-of-the-hill auction
