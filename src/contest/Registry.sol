@@ -3,10 +3,12 @@ pragma solidity ^0.8.20;
 
 contract Registry {
 
-    mapping(address => string) public registry;
+    mapping(address => address) public registry;
 
-    function register(string calldata data) public {
-        registry[msg.sender] = data;
+    event Registered(address indexed sender, address indexed target);
+
+    function register(address target) public {
+        registry[msg.sender] = target;
     }
 
 }
