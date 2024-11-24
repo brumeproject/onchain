@@ -7,10 +7,11 @@ contract Ranking {
 
     Contest public contest;
 
-    address[] public addressOf;
-
     mapping(address => bool) public hasRank;
+
     mapping(address => uint256) public rankOf;
+
+    mapping(uint256 => address) public addressOf;
 
     constructor(
         Contest contest_
@@ -18,11 +19,14 @@ contract Ranking {
         contest = contest_;
     }
 
-    event Claimed(uint256 rank, address winner, address loser);
+    event Claimed(uint256 indexed rank, address winner, address loser);
 
     function claim(uint256 rank) public {
         address winner = msg.sender;
         address loser = addressOf[rank];
+
+        if (winner == loser)
+            revert();
 
         uint256 attack = contest.getPastVotes(winner, block.number - 1);
         uint256 defense = contest.getPastVotes(loser, block.number - 1);
@@ -32,8 +36,13 @@ contract Ranking {
 
         emit Claimed(rank, winner, loser);
 
-        if (hasRank[winner]) 
-            addressOf[rankOf[winner]] = address(0);
+        if (hasRank[winner]) {
+            uint256 rank2 = rankOf[winner];
+
+            emit Unclaimed(rank2, winner);
+
+            addressOf[rank2] = address(0);
+        }
 
         rankOf[winner] = rank;
         hasRank[winner] = true;
@@ -42,6 +51,22 @@ contract Ranking {
 
         rankOf[loser] = 0;
         hasRank[loser] = false;
+    }
+
+    event Unclaimed(uint256 indexed rank, address loser);
+
+    function unclaim() public {
+        if (!hasRank[msg.sender])
+            revert();
+
+        uint256 rank = rankOf[msg.sender];
+
+        emit Unclaimed(rank, msg.sender);
+
+        addressOf[rank] = address(0);
+
+        rankOf[msg.sender] = 0;
+        hasRank[msg.sender] = false;
     }
 
 }
