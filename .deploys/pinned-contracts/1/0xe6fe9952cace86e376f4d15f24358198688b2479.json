@@ -1,9 +1,14 @@
 {
-  "name": "Registry",
-  "address": "0x1e0d64ccbeb42275d6e73eefffa8620056b70bcc",
+  "name": "Tokens",
+  "address": "0xe6fe9952cace86e376f4d15f24358198688b2479",
   "abi": [
     {
       "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "chain",
+          "type": "uint256"
+        },
         {
           "internalType": "address",
           "name": "target",
@@ -45,8 +50,13 @@
       "name": "registry",
       "outputs": [
         {
+          "internalType": "uint256",
+          "name": "chain",
+          "type": "uint256"
+        },
+        {
           "internalType": "address",
-          "name": "",
+          "name": "target",
           "type": "address"
         }
       ],
@@ -55,5 +65,5 @@
     }
   ],
   "filePath": " - connect to localhost - /src/contest/Registry.sol",
-  "pinnedAt": 1732467255736
+  "pinnedAt": 1732631416603
 }
