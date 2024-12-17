@@ -51,12 +51,7 @@ contract OldTimelocker is Ownable {
 
 }
 
-contract Timelocker is Ownable {
-
-    /**
-     * @dev Ownable contract to lock ownership of
-     */
-    Ownable public target;
+contract Timelocked is Ownable {
 
     /**
      * @dev Absolute timestamp of end-of-lock time
@@ -64,12 +59,10 @@ contract Timelocker is Ownable {
     uint256 public timelock = block.timestamp;
 
     constructor(
-        Ownable target_
+        address owner_
     )
-        Ownable(msg.sender)
-    {
-        target = target_;
-    }
+        Ownable(owner_)
+    {}
 
     modifier timelocked() {
         if (block.timestamp < timelock) 
@@ -78,15 +71,32 @@ contract Timelocker is Ownable {
         _;
     }
 
-    function dispose(address to) public onlyOwner timelocked {
-        target.transferOwnership(to);
-    }
-
     function extend(uint256 updated) public onlyOwner {
         if (updated < timelock) 
             revert();
 
         timelock = updated;
+    }
+
+}
+
+contract Timelocker is Timelocked {
+
+    /**
+     * @dev Ownable contract to lock ownership of
+     */
+    Ownable public target;
+
+    constructor(
+        Ownable target_
+    )
+        Timelocked(msg.sender)
+    {
+        target = target_;
+    }
+
+    function dispose(address to) public onlyOwner timelocked {
+        target.transferOwnership(to);
     }
 
 }
