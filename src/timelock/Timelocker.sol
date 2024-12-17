@@ -61,7 +61,7 @@ contract Timelocker is Ownable {
     /**
      * @dev Absolute timestamp of end-of-lock time
      */
-    uint256 public timestamp = block.timestamp;
+    uint256 public timelock = block.timestamp;
 
     constructor(
         Ownable target_
@@ -72,7 +72,7 @@ contract Timelocker is Ownable {
     }
 
     modifier timelocked() {
-        if (block.timestamp < timestamp) 
+        if (block.timestamp < timelock) 
             revert();
             
         _;
@@ -83,10 +83,10 @@ contract Timelocker is Ownable {
     }
 
     function extend(uint256 updated) public onlyOwner {
-        if (updated < timestamp) 
+        if (updated < timelock) 
             revert();
 
-        timestamp = updated;
+        timelock = updated;
     }
 
 }
