@@ -63,16 +63,6 @@ contract Timelocker is Ownable {
      */
     uint256 public timestamp = block.timestamp;
 
-    /**
-     * @dev You attempted to use something while the contract is locked
-     */
-    error LockedError(uint256 timestamp);
-
-    /**
-     * @dev You provided an invalid absolute timestamp
-     */
-    error InvalidTimestampError(uint256 timestamp);
-
     constructor(
         Ownable target_
     )
@@ -81,18 +71,20 @@ contract Timelocker is Ownable {
         target = target_;
     }
 
-    function dispose(address to) public onlyOwner {
-        if (block.timestamp < timestamp) {
-            revert LockedError(block.timestamp);
-        }
+    modifier timelocked() {
+        if (block.timestamp < timestamp) 
+            revert();
+            
+        _;
+    }
 
+    function dispose(address to) public onlyOwner timelocked {
         target.transferOwnership(to);
     }
 
     function extend(uint256 updated) public onlyOwner {
-        if (updated < timestamp) {
-            revert InvalidTimestampError(updated);
-        }
+        if (updated < timestamp) 
+            revert();
 
         timestamp = updated;
     }
