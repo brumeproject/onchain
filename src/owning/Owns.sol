@@ -7,7 +7,7 @@ import { ERC721Enumerable } from "@openzeppelin/contracts/token/ERC721/extension
 import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import { SafeCast } from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
-import { Forwarder } from "./forwarder.sol";
+import { Forwarder } from "../proxy/Forwarder.sol";
 
 library MyBytes {
 

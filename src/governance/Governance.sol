@@ -9,11 +9,11 @@ import { ERC20Wrapper } from "@openzeppelin/contracts/token/ERC20/extensions/ERC
 import { Votes } from "@openzeppelin/contracts/governance/utils/Votes.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { Token } from "./token.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Governance is Ownable, ERC20, ERC20Wrapper, ERC20Votes {
     
-    Token public token;
+    IERC20 public token;
 
     /**
      * @dev The timelock delay in seconds.
@@ -59,7 +59,7 @@ contract Governance is Ownable, ERC20, ERC20Wrapper, ERC20Votes {
     error GovernanceDisabledOperation();
     
     constructor(
-        Token token_,
+        IERC20 token_,
         uint256 delay_
     )
         Ownable(address(this))

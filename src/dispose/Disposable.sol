@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract UnDisposable {
+abstract contract Disposable {
     function dispose() external virtual;
 }
 
@@ -16,12 +16,12 @@ abstract contract ToDisposable {
  */
 contract Acquirer is Ownable {
 
-    UnDisposable public disposable;
+    Disposable public disposable;
 
     Ownable public ownable;
 
     constructor(
-        UnDisposable disposable_,
+        Disposable disposable_,
         Ownable ownable_
     )
         Ownable(msg.sender)

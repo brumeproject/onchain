@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { Token } from "../token/token.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * An ownable spot in a Harberger-style top-of-the-hill auction
@@ -10,14 +10,14 @@ import { Token } from "../token/token.sol";
  */
 contract Spot is Ownable {
 
-    Token public token;
+    IERC20 public token;
 
     uint256 public delay;
 
     uint256 public timestamp = block.timestamp;
 
     constructor(
-        Token token_,
+        IERC20 token_,
         uint256 delay_
     )
         Ownable(msg.sender)
