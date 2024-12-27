@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { Timelocked } from "./Timelocked.sol";
 
 contract OldTimelocker is Ownable {
 
@@ -47,35 +48,6 @@ contract OldTimelocker is Ownable {
         }
 
         timestamp = updated;
-    }
-
-}
-
-contract Timelocked is Ownable {
-
-    /**
-     * @dev Absolute timestamp of end-of-lock time
-     */
-    uint256 public timelock = block.timestamp;
-
-    constructor(
-        address owner_
-    )
-        Ownable(owner_)
-    {}
-
-    modifier timelocked() {
-        if (block.timestamp < timelock) 
-            revert();
-            
-        _;
-    }
-
-    function extend(uint256 updated) public onlyOwner {
-        if (updated < timelock) 
-            revert();
-
-        timelock = updated;
     }
 
 }

@@ -3,8 +3,9 @@ pragma solidity ^0.8.20;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Token } from "./Token.sol";
+import { Timelocked } from "../timelock/Timelocked.sol";
 
-contract Inflator is Ownable {
+contract Inflator is Timelocked {
 
     Token public token;
 
@@ -12,13 +13,13 @@ contract Inflator is Ownable {
 
     uint256 public rate = 3000000000000000;
 
-    uint256 public timestamp = block.timestamp;
+    uint256 public timemint = 1735689600;
 
     constructor(
         Token token_,
         address target_
     )
-        Ownable(msg.sender)
+        Timelocked(msg.sender)
     {
         token = token_;
         target = target_;
@@ -28,12 +29,12 @@ contract Inflator is Ownable {
         token.transferOwnership(to);
     }
 
-    function brrr() public /* EVERYONE! */ {
-        uint256 time = block.timestamp - timestamp;
+    function mint() public onlyOwner {
+        uint256 time = block.timestamp - timemint;
 
         token.mint(target, time * rate);
 
-        timestamp = block.timestamp;
+        timemint = block.timestamp;
     }
 
 }
