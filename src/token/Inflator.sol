@@ -25,7 +25,7 @@ contract Inflator is Timelocked {
         target = target_;
     }
 
-    function dispose(address to) public onlyOwner {
+    function dispose(address to) public onlyOwner timelocked {
         token.transferOwnership(to);
     }
 
