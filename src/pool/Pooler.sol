@@ -31,16 +31,16 @@ contract Pooler is Timelocked {
       manager = manager_;
   }
 
-  function dispose() public onlyOwner timelocked {
-      token0.transfer(owner(), token0.balanceOf(address(this)));
-      token1.transfer(owner(), token1.balanceOf(address(this)));
+  function dispose(address to) public onlyOwner timelocked {
+      token0.transfer(to, token0.balanceOf(address(this)));
+      token1.transfer(to, token1.balanceOf(address(this)));
 
       uint256 balance = manager.balanceOf(address(this));
 
       for (uint256 i = 0; i < balance; i++) {
           uint256 tokenId = manager.tokenOfOwnerByIndex(address(this), i);
 
-          manager.transferFrom(address(this), owner(), tokenId);
+          manager.transferFrom(address(this), to, tokenId);
       }
   }
 

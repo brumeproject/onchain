@@ -86,13 +86,13 @@ contract Collector is Timelocked {
       manager = manager_;
   }
 
-  function dispose() public onlyOwner timelocked {
+  function dispose(address to) public onlyOwner timelocked {
       uint256 balance = manager.balanceOf(address(this));
 
       for (uint256 i = 0; i < balance; i++) {
           uint256 tokenId = manager.tokenOfOwnerByIndex(address(this), i);
 
-          manager.transferFrom(address(this), owner(), tokenId);
+          manager.transferFrom(address(this), to, tokenId);
       }
   }
 
