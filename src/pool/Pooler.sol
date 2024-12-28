@@ -8,19 +8,10 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Pooler is Timelocked {
 
-  /**
-   * @dev Uniswap-like v3 position manager
-   */
   INonfungiblePositionManager public manager;
 
-  /**
-   * @dev Only for proper disposal, order doesn't matter
-   */
   IERC20 public token0;
 
-  /**
-   * @dev Only for proper disposal, order doesn't matter
-   */
   IERC20 public token1;
 
   constructor(
