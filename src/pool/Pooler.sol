@@ -15,29 +15,26 @@ contract Pooler is Timelocked {
   IERC20 public token1;
 
   constructor(
-      INonfungiblePositionManager manager_
+      INonfungiblePositionManager manager_,
+      IERC20 token0_,
+      IERC20 token1_
   )
       Timelocked(msg.sender)
   {
       manager = manager_;
+
+      token0 = token0_;
+      token1 = token1_;
+
+      token0.approve(address(manager), type(uint256).max);
+      token1.approve(address(manager), type(uint256).max);
   }
 
   function dispose(address to) public onlyOwner timelocked {
       token0.transfer(to, token0.balanceOf(address(this)));
       token1.transfer(to, token1.balanceOf(address(this)));
-
-      uint256 balance = manager.balanceOf(address(this));
-
-      for (uint256 i = 0; i < balance; i++) {
-          uint256 tokenId = manager.tokenOfOwnerByIndex(address(this), i);
-
-          manager.transferFrom(address(this), to, tokenId);
-      }
   }
-
-  /**
-   * @dev Owner MAY NEED to verify that the liquidity is not sent to a unowned pool
-   */
+  
   function increaseLiquidity(INonfungiblePositionManager.IncreaseLiquidityParams memory params) public onlyOwner returns (uint128 liquidity, uint256 amount0, uint256 amount1) { 
       return manager.increaseLiquidity(params);
   }
