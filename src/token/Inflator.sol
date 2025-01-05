@@ -9,30 +9,26 @@ contract Inflator is Timelocked {
 
     Token public token;
 
-    address public target;
-
     uint256 public rate = 3000000000000000;
 
     uint256 public timemint = 1735689600;
 
     constructor(
-        Token token_,
-        address target_
+        Token token_
     )
         Timelocked(msg.sender)
     {
         token = token_;
-        target = target_;
     }
 
     function dispose(address to) public onlyOwner timelocked {
         token.transferOwnership(to);
     }
 
-    function mint() public onlyOwner {
+    function mint(address to) public onlyOwner {
         uint256 time = block.timestamp - timemint;
 
-        token.mint(target, time * rate);
+        token.mint(to, time * rate);
 
         timemint = block.timestamp;
     }
