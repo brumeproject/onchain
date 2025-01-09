@@ -9,16 +9,18 @@ contract Inflator is Timelocked {
 
     uint256 public constant rate = 3000000000000000;
 
-    uint256 public timemint = 1735689600;
-
     Token public immutable token;
 
+    uint256 public timemint;
+
     constructor(
-        Token token_
+        Token token_,
+        uint256 timemint_
     )
         Timelocked(msg.sender)
     {
         token = token_;
+        timemint = timemint_;
     }
 
     function dispose(address to) public onlyOwner timelocked {
