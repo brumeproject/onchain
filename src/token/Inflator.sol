@@ -7,11 +7,11 @@ import { Timelocked } from "../timelock/Timelocked.sol";
 
 contract Inflator is Timelocked {
 
-    Token public token;
-
-    uint256 public rate = 3000000000000000;
+    uint256 public constant rate = 3000000000000000;
 
     uint256 public timemint = 1735689600;
+
+    Token public immutable token;
 
     constructor(
         Token token_
