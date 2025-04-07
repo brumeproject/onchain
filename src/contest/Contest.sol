@@ -7,18 +7,38 @@ import { ERC20Votes } from "@openzeppelin/contracts/token/ERC20/extensions/ERC20
 import { ERC20Wrapper } from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Wrapper.sol";
 import { Votes } from "@openzeppelin/contracts/governance/utils/Votes.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Contest is ERC20, ERC20Wrapper, ERC20Votes {
+interface Updatable {
+    function update(address from, address to, uint256 value) external;
+}
+
+contract Hub is Ownable, ERC20, ERC20Wrapper {
+
+    Updatable[] public targets;
 
     constructor(
         string memory name_,
         string memory symbol_,
         IERC20 token_
     )
-        ERC20Wrapper(token_)
+        Ownable(msg.sender)
         ERC20(name_, symbol_)
-        EIP712("Nevermind", "v1")
+        ERC20Wrapper(token_)
     {}
+
+    /**
+     * @dev Update the voting power of all targets.
+     */
+    function _update(address from, address to, uint256 value) internal override(ERC20) {
+        for (uint256 i = 0; i < targets.length; i++) {
+            if (address(targets[i]) == address(0))
+                continue;
+            targets[i].update(from, to, value);
+        }
+
+        super._update(from, to, value);
+    }
 
     /**
      * @dev Use ERC20Wrapper decimals.
@@ -28,24 +48,17 @@ contract Contest is ERC20, ERC20Wrapper, ERC20Votes {
     }
 
     /**
-     * @dev Use ERC20Votes to update the voting power.
+     * @dev Push a target.
      */
-    function _update(address from, address to, uint256 value) internal override(ERC20, ERC20Votes) {
-        super._update(from, to, value);
+    function push(Updatable target) public onlyOwner {
+        targets.push(target);
     }
 
     /**
-     * @dev Disable delegate-by-signature to avoid phishing and replay attacks.
+     * @dev Clear an index.
      */
-    function delegateBySig(
-        address,
-        uint256,
-        uint256,
-        uint8,
-        bytes32,
-        bytes32
-    ) public pure override(Votes) {
-        revert();
+    function clear(uint256 index) public onlyOwner {
+        targets[index] = Updatable(address(0));
     }
 
     /**
@@ -74,6 +87,73 @@ contract Contest is ERC20, ERC20Wrapper, ERC20Votes {
      */
     function withdrawAll() public {
         withdrawTo(msg.sender, balanceOf(msg.sender));
+    }
+
+}
+
+contract Contest is Ownable, ERC20, ERC20Votes {
+
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        ERC20 hub_
+    )
+        Ownable(address(hub_))
+        ERC20(name_, symbol_)
+        EIP712("Nevermind", "v1")
+    {}
+
+    /**
+     * @dev Use ERC20Votes to update the voting power.
+     */
+    function _update(address from, address to, uint256 value) internal override(ERC20, ERC20Votes) {
+        super._update(from, to, value);
+    }
+
+    /**
+     * @dev Allow virtual updates from owner
+     */
+    function update(address from, address to, uint256 value) public onlyOwner {
+        if (from != address(0) && balanceOf(from) == 0)
+            _mint(from, ERC20(owner()).balanceOf(from));
+        if (to != address(0) && balanceOf(to) == 0)
+            _mint(to, ERC20(owner()).balanceOf(to));
+        _update(from, to, value);
+    }
+
+    /**
+     * @dev Disable approvals.
+     */
+    function approve(address, uint256) public pure override(ERC20) returns (bool) {
+        revert();
+    }
+
+    /**
+     * @dev Disable transfers.
+     */
+    function transfer(address, uint256) public pure override(ERC20) returns (bool) {
+        revert();
+    }
+
+    /**
+     * @dev Disable transfers.
+     */
+    function transferFrom(address, address, uint256) public pure override(ERC20) returns (bool) {
+        revert();
+    }
+
+    /**
+     * @dev Disable delegate-by-signature.
+     */
+    function delegateBySig(
+        address,
+        uint256,
+        uint256,
+        uint8,
+        bytes32,
+        bytes32
+    ) public pure override(Votes) {
+        revert();
     }
 
 }
