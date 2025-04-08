@@ -89,6 +89,27 @@ contract Hub is Ownable, ERC20, ERC20Wrapper {
         withdrawTo(msg.sender, balanceOf(msg.sender));
     }
 
+    /**
+     * @dev Disable approvals.
+     */
+    function approve(address, uint256) public pure override(ERC20) returns (bool) {
+      revert();
+    }
+
+    /**
+     * @dev Disable transfers.
+     */
+    function transfer(address, uint256) public pure override(ERC20) returns (bool) {
+        revert();
+    }
+
+    /**
+     * @dev Disable transfers.
+     */
+    function transferFrom(address, address, uint256) public pure override(ERC20) returns (bool) {
+        revert();
+    }
+
 }
 
 contract Contest is Ownable, ERC20, ERC20Votes {
@@ -111,13 +132,24 @@ contract Contest is Ownable, ERC20, ERC20Votes {
     }
 
     /**
-     * @dev Allow virtual updates from owner
+     * @dev Allow virtual updates from owner.
      */
     function update(address from, address to, uint256 value) public onlyOwner {
-        if (from != address(0) && balanceOf(from) == 0)
-            _mint(from, ERC20(owner()).balanceOf(from));
+        /**
+         * @dev Setup account on first deposit.
+         */
         if (to != address(0) && balanceOf(to) == 0)
             _mint(to, ERC20(owner()).balanceOf(to));
+
+        /**
+         * @dev Setup account on first withdraw.
+         */
+        if (from != address(0) && balanceOf(from) == 0)
+            _mint(from, ERC20(owner()).balanceOf(from));
+            
+        /**
+         * @dev Update the voting power.
+         */
         _update(from, to, value);
     }
 
