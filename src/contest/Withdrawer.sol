@@ -52,6 +52,8 @@ contract Withdrawer is Ownable {
             revert();
         if (requests[signature].withdrawn)
             revert();
+        if (votes.getPastVotes(signer, (block.number - 1)) < votes.getPastVotes(nuller, (block.number - 1)))
+            revert();
 
         requests[signature] = Request({ block: block.number, target: target, amount: amount, withdrawn: false });
     }
@@ -60,6 +62,8 @@ contract Withdrawer is Ownable {
         Request storage request_ = requests[signature];
 
         if (block.number < (request_.block + delay))
+            revert();
+        if (votes.getPastVotes(signer, (block.number - 1)) < votes.getPastVotes(nuller, (block.number - 1)))
             revert();
 
         token.transfer(request_.target, request_.amount);
