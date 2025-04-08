@@ -6,6 +6,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+// TODO: test
 contract Withdrawer is Ownable {
 
     Votes public immutable votes;
@@ -17,14 +18,14 @@ contract Withdrawer is Ownable {
 
     uint256 public immutable delay;
 
+    mapping(bytes => Request) public requests;
+
     struct Request {
         uint256 block;
         address target;
         uint256 amount;
         bool withdrawn;
     }
-
-    mapping(bytes => Request) public requests;
 
     constructor(
         Votes votes_,
@@ -49,19 +50,21 @@ contract Withdrawer is Ownable {
         
         if (signer_ != signer)
             revert();
+        if (requests[signature].withdrawn)
+            revert();
 
         requests[signature] = Request({ block: block.number, target: target, amount: amount, withdrawn: false });
     }
 
     function withdraw(bytes memory signature) public {
-        Request memory request_ = requests[signature];
+        Request storage request_ = requests[signature];
 
         if (block.number < (request_.block + delay))
             revert();
 
         token.transfer(request_.target, request_.amount);
 
-        requests[signature].withdrawn = true;
+        request_.withdrawn = true;
     }
 
 }
