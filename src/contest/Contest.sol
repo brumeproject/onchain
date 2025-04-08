@@ -7,6 +7,9 @@ import { ERC20Votes, Votes } from "@openzeppelin/contracts/token/ERC20/extension
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
+/**
+ * @dev Contest is a delegate-to-vote contract where voting power is updated by a parent ERC20.
+ */
 contract Contest is Ownable, ERC20, ERC20Votes {
 
     constructor(

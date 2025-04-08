@@ -10,7 +10,10 @@ interface Updatable {
     function update(address from, address to, uint256 value) external;
 }
 
-contract Hub is Ownable, ERC20, ERC20Wrapper {
+/**
+ * @dev Staker is a token-wrapper contract that allows users to update their voting power on multiple targets.
+ */
+contract Staker is Ownable, ERC20, ERC20Wrapper {
 
     Updatable[] public targets;
 
