@@ -15,9 +15,9 @@ contract Contest is Ownable, ERC20, ERC20Votes {
     constructor(
         string memory name_,
         string memory symbol_,
-        IERC20 parent_
+        IERC20 owner_
     )
-        Ownable(address(parent_))
+        Ownable(address(owner_))
         ERC20(name_, symbol_)
         EIP712("Nevermind", "v1")
     {}
